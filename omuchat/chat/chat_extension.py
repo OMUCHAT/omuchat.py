@@ -1,15 +1,13 @@
 from typing import Dict
 
 from omu.client import Client, ClientListener
-from omu.endpoint.endpoint import ClientEndpointType
 from omu.extension import Extension, define_extension_type
-from omu.extension.server.model.endpoint_info import EndpointInfo
+from omu.extension.endpoint.endpoint import ClientEndpointType, EndpointInfo
 from omu.extension.server.model.extension_info import ExtensionInfo
 from omu.extension.table import TableExtensionType
 from omu.extension.table.model.table_info import TableInfo
 from omu.extension.table.table import ModelTableType
-from omu.interface.serializable import Serializer
-
+from omu.interface import Serializer
 from omuchat.model.channel import Channel, ChannelJson
 from omuchat.model.message import Message, MessageJson
 from omuchat.model.provider import Provider, ProviderJson

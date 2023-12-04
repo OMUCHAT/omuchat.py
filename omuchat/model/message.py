@@ -1,8 +1,7 @@
 from datetime import datetime
 from typing import List, NotRequired, TypedDict
 
-from omu.interface.keyable import Keyable
-from omu.interface.model import Model
+from omu.interface import Keyable, Model
 
 from .author import Author, AuthorJson
 from .content import Content, ContentComponent, ContentJson, TextContent

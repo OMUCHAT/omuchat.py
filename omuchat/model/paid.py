@@ -1,6 +1,6 @@
 from typing import TypedDict
 
-from omu.interface.model import Model
+from omu.interface import Model
 
 
 class PaidJson(TypedDict):

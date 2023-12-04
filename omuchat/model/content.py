@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import List, Literal, NotRequired, TypedDict
 
-from omu.interface.model import Model
+from omu.interface import Model
 
 type ContentJson = TextContentJson
 type Content = TextContent
