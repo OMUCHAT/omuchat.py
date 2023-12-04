@@ -1,6 +1,9 @@
-from typing import Callable, Coroutine, Dict, List
+from __future__ import annotations
 
-from .event import EventKey
+from typing import TYPE_CHECKING, Callable, Coroutine, Dict, List
+
+if TYPE_CHECKING:
+    from .event import EventKey
 
 type EventHandler[T] = Callable[[T], Coroutine[None, None, None]]
 

@@ -8,6 +8,7 @@ from omu.extension.table import TableExtensionType
 from omu.extension.table.model.table_info import TableInfo
 from omu.extension.table.table import ModelTableType
 from omu.interface import Serializer
+
 from omuchat.model.channel import Channel, ChannelJson
 from omuchat.model.message import Message, MessageJson
 from omuchat.model.provider import Provider, ProviderJson
