@@ -1,10 +1,12 @@
+from omuchat.model.channel import Channel
 from omuchat.model.message import Message
+from omuchat.model.provider import Provider
+from omuchat.model.room import Room
 
 
-class EventKey[T]:
-    def __init__(self, name: str, type: type[T] | None = None):
+class EventKey[**P]:
+    def __init__(self, name: str):
         self.name = name
-        self.type = type
 
     def __str__(self):
         return self.name
@@ -22,7 +24,16 @@ class EventKey[T]:
 
 
 class events:
-    Ready = EventKey("ready")
-    MessageCreate = EventKey("on_message", Message)
-    MessageUpdate = EventKey("on_message_update", Message)
-    MessageDelete = EventKey("on_message_delete", Message)
+    Ready = EventKey[[]]("ready")
+    MessageCreate = EventKey[[Message]]("on_message")
+    MessageUpdate = EventKey[[Message]]("on_message_update")
+    MessageDelete = EventKey[[Message]]("on_message_delete")
+    ChannelCreate = EventKey[[Channel]]("on_channel_create")
+    ChannelUpdate = EventKey[[Channel]]("on_channel_update")
+    ChannelDelete = EventKey[[Channel]]("on_channel_delete")
+    ProviderCreate = EventKey[[Provider]]("on_provider_create")
+    ProviderUpdate = EventKey[[Provider]]("on_provider_update")
+    ProviderDelete = EventKey[[Provider]]("on_provider_delete")
+    RoomCreate = EventKey[[Room]]("on_room_create")
+    RoomUpdate = EventKey[[Room]]("on_room_update")
+    RoomDelete = EventKey[[Room]]("on_room_delete")

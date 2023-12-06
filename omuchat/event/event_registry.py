@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Callable, Coroutine, Dict, List
 if TYPE_CHECKING:
     from .event import EventKey
 
-type EventHandler[T] = Callable[[T], Coroutine[None, None, None]]
+type EventHandler[**P] = Callable[P, Coroutine[None, None, None]]
 
 
 class EventRegistry:
@@ -22,8 +22,8 @@ class EventRegistry:
             return
         self._handlers[key].remove(handler)
 
-    async def dispatch[T](self, key: EventKey[T], data: T):
+    async def dispatch[**P](self, key: EventKey[P], *args: P.args, **kwargs: P.kwargs):
         if key not in self._handlers:
             return
         for handler in self._handlers[key]:
-            await handler(data)
+            await handler(*args, **kwargs)
