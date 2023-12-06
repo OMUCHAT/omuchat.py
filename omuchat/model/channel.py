@@ -63,3 +63,6 @@ class Channel(Keyable, Model[ChannelJson]):
             icon_url=self.icon_url,
             created_at=int(self.created_at.timestamp() * 1000),
         )
+
+    def __str__(self):
+        return f"Channel({self.provider_id}, {self.url}, {self.name})"

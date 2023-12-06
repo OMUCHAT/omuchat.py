@@ -18,9 +18,9 @@ class Provider(Keyable, Model[ProviderJson]):
         id: str,
         url: str,
         name: str,
-        image_url: str | None,
         description: str,
         regex: str,
+        image_url: str | None = None,
     ) -> None:
         self.id = id
         self.url = url

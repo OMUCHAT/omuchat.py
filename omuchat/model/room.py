@@ -1,4 +1,4 @@
-from typing import TypedDict
+from typing import NotRequired, TypedDict
 
 from omu.interface import Keyable, Model
 
@@ -6,13 +6,13 @@ from omu.interface import Keyable, Model
 class RoomJson(TypedDict):
     id: str
     provider_id: str
-    channel_id: str | None
+    channel_id: NotRequired[str] | None
     name: str
-    description: str | None
-    online: int
+    description: NotRequired[str] | None
+    online: bool
     url: str
-    image_url: str | None
-    viewers: int | None
+    image_url: NotRequired[str] | None
+    viewers: NotRequired[int] | None
 
 
 class Room(Keyable, Model[RoomJson]):
@@ -20,13 +20,13 @@ class Room(Keyable, Model[RoomJson]):
         self,
         id: str,
         provider_id: str,
-        channel_id: str | None,
         name: str,
-        description: str | None,
-        online: int,
+        online: bool,
         url: str,
-        image_url: str | None,
-        viewers: int | None,
+        channel_id: str | None = None,
+        description: str | None = None,
+        image_url: str | None = None,
+        viewers: int | None = None,
     ) -> None:
         self.id = id
         self.provider_id = provider_id
@@ -43,13 +43,13 @@ class Room(Keyable, Model[RoomJson]):
         return cls(
             id=json["id"],
             provider_id=json["provider_id"],
-            channel_id=json["channel_id"],
+            channel_id=json.get("channel_id", None),
             name=json["name"],
-            description=json["description"],
+            description=json.get("description", None),
             online=json["online"],
             url=json["url"],
-            image_url=json["image_url"],
-            viewers=json["viewers"],
+            image_url=json.get("image_url", None),
+            viewers=json.get("viewers", None),
         )
 
     def key(self) -> str:

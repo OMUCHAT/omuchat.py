@@ -8,16 +8,22 @@ from .role import Role, RoleJson
 class AuthorJson(TypedDict):
     id: str
     name: str
-    avatar_url: str
+    avatar_url: NotRequired[str] | None
     roles: NotRequired[List[RoleJson]] | None
 
 
 class Author(Keyable, Model[AuthorJson]):
-    def __init__(self, id: str, name: str, avatar_url: str, roles: List[Role]):
+    def __init__(
+        self,
+        id: str,
+        name: str,
+        avatar_url: str | None,
+        roles: List[Role] | None = None,
+    ) -> None:
         self.id = id
         self.name = name
         self.avatar_url = avatar_url
-        self.roles = roles
+        self.roles = roles or []
 
     def key(self) -> str:
         return self.id
@@ -35,10 +41,8 @@ class Author(Keyable, Model[AuthorJson]):
         return cls(
             id=json["id"],
             name=json["name"],
-            avatar_url=json["avatar_url"],
-            roles=[Role.from_json(role) for role in json["roles"]]
-            if json.get("roles", None) and json["roles"]
-            else [],
+            avatar_url=json.get("avatar_url", None) and json["avatar_url"],
+            roles=[Role.from_json(role) for role in json.get("roles", [])],
         )
 
     def __str__(self) -> str:
