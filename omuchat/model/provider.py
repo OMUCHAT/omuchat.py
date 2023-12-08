@@ -1,5 +1,9 @@
+from __future__ import annotations
+
+import json
 from typing import TypedDict
 
+import aiohttp
 from omu.interface import Keyable, Model
 
 
@@ -7,6 +11,8 @@ class ProviderJson(TypedDict):
     id: str
     url: str
     name: str
+    version: str
+    repository_url: str
     image_url: str | None
     description: str
     regex: str
@@ -18,6 +24,8 @@ class Provider(Keyable, Model[ProviderJson]):
         id: str,
         url: str,
         name: str,
+        version: str,
+        repository_url: str,
         description: str,
         regex: str,
         image_url: str | None = None,
@@ -25,6 +33,8 @@ class Provider(Keyable, Model[ProviderJson]):
         self.id = id
         self.url = url
         self.name = name
+        self.version = version
+        self.repository_url = repository_url
         self.image_url = image_url
         self.description = description
         self.regex = regex
@@ -35,6 +45,8 @@ class Provider(Keyable, Model[ProviderJson]):
             id=json["id"],
             url=json["url"],
             name=json["name"],
+            version=json["version"],
+            repository_url=json["repository_url"],
             image_url=json["image_url"],
             description=json["description"],
             regex=json["regex"],
@@ -48,6 +60,8 @@ class Provider(Keyable, Model[ProviderJson]):
             id=self.id,
             url=self.url,
             name=self.name,
+            version=self.version,
+            repository_url=self.repository_url,
             image_url=self.image_url,
             description=self.description,
             regex=self.regex,
@@ -55,3 +69,17 @@ class Provider(Keyable, Model[ProviderJson]):
 
     def __str__(self) -> str:
         return self.name
+
+    def get_session(self) -> aiohttp.ClientSession:
+        user_agent = json.dumps(
+            [
+                "OmuChat",
+                {
+                    "id": self.id,
+                    "version": self.version,
+                    "repository_url": self.repository_url,
+                },
+            ]
+        )
+        session = aiohttp.ClientSession(headers={"User-Agent": user_agent})
+        return session

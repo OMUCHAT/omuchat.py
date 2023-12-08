@@ -7,6 +7,8 @@ from .content import (
     ContentJson,
     ImageContent,
     ImageContentJson,
+    RootContent,
+    RootContentJson,
     TextContent,
     TextContentJson,
 )
@@ -26,6 +28,8 @@ __all__ = [
     "ContentComponent",
     "ContentComponentJson",
     "ContentJson",
+    "RootContent",
+    "RootContentJson",
     "ImageContent",
     "ImageContentJson",
     "TextContent",
