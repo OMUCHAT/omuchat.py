@@ -15,7 +15,7 @@ class MessageJson(TypedDict):
     content: NotRequired[ContentJson] | None
     paid: NotRequired[PaidJson] | None
     gift: NotRequired[GiftJson] | None
-    created_at: NotRequired[int] | None
+    created_at: NotRequired[str] | None  # ISO 8601 date string
 
 
 class Message(Keyable, Model[MessageJson]):
@@ -52,7 +52,7 @@ class Message(Keyable, Model[MessageJson]):
             gift = Gift.from_json(json["gift"])
         created_at = None
         if json.get("created_at", None) and json["created_at"]:
-            created_at = datetime.fromtimestamp(json["created_at"] / 1000)
+            created_at = datetime.fromisoformat(json["created_at"])
 
         return cls(
             room_id=json["room_id"],
@@ -89,9 +89,7 @@ class Message(Keyable, Model[MessageJson]):
             content=self.content.json() if self.content else None,
             paid=self.paid.json() if self.paid else None,
             gift=self.gift.json() if self.gift else None,
-            created_at=int(self.created_at.timestamp() * 1000)
-            if self.created_at
-            else None,
+            created_at=self.created_at.isoformat() if self.created_at else None,
         )
 
     def __str__(self) -> str:
