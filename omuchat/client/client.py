@@ -1,10 +1,13 @@
 from typing import Callable, Dict
 
+from loguru import logger
+
 import omu.client
 from omu import Address, App, ConnectionListener, OmuClient
 from omu.extension.table import Table, TableListener
 from omuchat.event import EventHandler, EventKey, EventRegistry, events
 from omuchat.model import Channel, Message, Provider, Room
+from omuchat.model.author import Author
 
 from ..chat import ChatExtensionType
 
@@ -24,6 +27,23 @@ class _MessageListener(TableListener[Message]):
     async def on_remove(self, items: Dict[str, Message]) -> None:
         for message in items.values():
             await self.event_registry.dispatch(events.MessageDelete, message)
+
+
+class _AuthorListener(TableListener[Author]):
+    def __init__(self, registry: EventRegistry):
+        self.event_registry = registry
+
+    async def on_add(self, items: Dict[str, Author]) -> None:
+        for author in items.values():
+            await self.event_registry.dispatch(events.AuthorCreate, author)
+
+    async def on_update(self, items: Dict[str, Author]) -> None:
+        for author in items.values():
+            await self.event_registry.dispatch(events.AuthorUpdate, author)
+
+    async def on_remove(self, items: Dict[str, Author]) -> None:
+        for author in items.values():
+            await self.event_registry.dispatch(events.AuthorDelete, author)
 
 
 class _ChannelListener(TableListener[Channel]):
@@ -77,15 +97,7 @@ class _RoomListener(TableListener[Room]):
             await self.event_registry.dispatch(events.RoomDelete, room)
 
 
-class _Listener(ConnectionListener):
-    def __init__(self, registry: EventRegistry):
-        self.event_registry = registry
-
-    async def on_connected(self) -> None:
-        await self.event_registry.dispatch(events.Ready)
-
-
-class Client:
+class Client(ConnectionListener):
     def __init__(
         self,
         app: App,
@@ -100,11 +112,12 @@ class Client:
         )
         self.event_registry = EventRegistry()
         self.chat = self.omu.extensions.register(ChatExtensionType)
-        self.omu.connection.add_listener(_Listener(self.event_registry))
         self.chat.messages.add_listener(_MessageListener(self.event_registry))
+        self.chat.authors.add_listener(_AuthorListener(self.event_registry))
         self.chat.channels.add_listener(_ChannelListener(self.event_registry))
         self.chat.providers.add_listener(_ProviderListener(self.event_registry))
         self.chat.rooms.add_listener(_RoomListener(self.event_registry))
+        self.omu.connection.add_listener(self)
 
     @property
     def loop(self):
@@ -113,6 +126,10 @@ class Client:
     @property
     def messages(self) -> Table[Message]:
         return self.chat.messages
+
+    @property
+    def authors(self) -> Table[Author]:
+        return self.chat.authors
 
     @property
     def channels(self) -> Table[Channel]:
@@ -125,6 +142,15 @@ class Client:
     @property
     def rooms(self) -> Table[Room]:
         return self.chat.rooms
+
+    async def on_connected(self) -> None:
+        await self.event_registry.dispatch(events.Ready)
+
+    async def on_disconnected(self) -> None:
+        await self.event_registry.dispatch(events.Disconnect)
+        logger.warning("Trying to reconnect...")
+        self.loop.create_task(self.omu.connection.connect())
+        logger.debug("Reconnected!")
 
     def run(self):
         self.omu.run()

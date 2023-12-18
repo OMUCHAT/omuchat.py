@@ -16,7 +16,7 @@ from .gift import Gift, GiftJson
 from .message import Message, MessageJson
 from .paid import Paid, PaidJson
 from .provider import Provider, ProviderJson
-from .role import Role, RoleJson
+from .role import MODERATOR, OWNER, Role, RoleJson
 from .room import Room, RoomJson
 
 __all__ = [
@@ -44,6 +44,8 @@ __all__ = [
     "ProviderJson",
     "Role",
     "RoleJson",
+    "MODERATOR",
+    "OWNER",
     "Room",
     "RoomJson",
 ]

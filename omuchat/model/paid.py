@@ -4,12 +4,12 @@ from omu.interface import Model
 
 
 class PaidJson(TypedDict):
-    amount: int
+    amount: float
     currency: str
 
 
 class Paid(Model[PaidJson]):
-    def __init__(self, amount: int, currency: str) -> None:
+    def __init__(self, amount: float, currency: str) -> None:
         self.amount = amount
         self.currency = currency
 

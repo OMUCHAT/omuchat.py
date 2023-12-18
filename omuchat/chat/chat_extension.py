@@ -8,7 +8,7 @@ from omu.extension.table import TableExtensionType
 from omu.extension.table.model.table_info import TableInfo
 from omu.extension.table.table import ModelTableType
 from omu.interface import Serializer
-
+from omuchat.model.author import Author, AuthorJson
 from omuchat.model.channel import Channel, ChannelJson
 from omuchat.model.message import Message, MessageJson
 from omuchat.model.provider import Provider, ProviderJson
@@ -25,6 +25,7 @@ class ChatExtension(Extension, ClientListener):
         client.add_listener(self)
         tables = client.extensions.get(TableExtensionType)
         self.messages = tables.register(MessagesTableKey)
+        self.authors = tables.register(AuthorsTableKey)
         self.channels = tables.register(ChannelsTableKey)
         self.providers = tables.register(ProviderTableKey)
         self.rooms = tables.register(RoomTableKey)
@@ -36,6 +37,10 @@ class ChatExtension(Extension, ClientListener):
 MessagesTableKey = ModelTableType[Message, MessageJson](
     TableInfo.create(ChatExtensionType, "messages", use_database=True),
     Serializer.model(lambda data: Message.from_json(data)),
+)
+AuthorsTableKey = ModelTableType[Author, AuthorJson](
+    TableInfo.create(ChatExtensionType, "authors"),
+    Serializer.model(lambda data: Author.from_json(data)),
 )
 ChannelsTableKey = ModelTableType[Channel, ChannelJson](
     TableInfo.create(ChatExtensionType, "channels"),

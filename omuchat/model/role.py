@@ -55,3 +55,21 @@ class Role(Keyable, Model[RoleJson]):
 
     def __str__(self) -> str:
         return self.name
+
+
+MODERATOR = Role(
+    id="moderator",
+    name="Moderator",
+    is_owner=False,
+    is_moderator=True,
+    icon_url=None,
+    color=None,
+)
+OWNER = Role(
+    id="owner",
+    name="Owner",
+    is_owner=True,
+    is_moderator=True,
+    icon_url=None,
+    color=None,
+)

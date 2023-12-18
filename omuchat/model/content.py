@@ -14,7 +14,9 @@ class ContentComponentJson[T: str](TypedDict):
 
 
 class ContentComponent(Model[ContentComponentJson]):
-    def __init__(self, type: str, siblings: List[Content] | None = None) -> None:
+    def __init__(
+        self, type: str, siblings: List[ContentComponent] | None = None
+    ) -> None:
         self.type = type
         self.siblings = siblings
 
@@ -42,7 +44,7 @@ class RootContentJson(ContentComponentJson[Literal["root"]]):
 
 
 class RootContent(ContentComponent, Model[RootContentJson]):
-    def __init__(self, siblings: List[Content] | None = None) -> None:
+    def __init__(self, siblings: List[ContentComponent] | None = None) -> None:
         super().__init__(type="root", siblings=siblings)
 
     def json(self) -> RootContentJson:
@@ -54,7 +56,7 @@ class RootContent(ContentComponent, Model[RootContentJson]):
         }
 
     @classmethod
-    def of(cls, *siblings: Content) -> RootContent:
+    def of(cls, *siblings: ContentComponent) -> RootContent:
         return cls(siblings=list(siblings))
 
     @classmethod
@@ -66,7 +68,7 @@ class RootContent(ContentComponent, Model[RootContentJson]):
         return cls(
             siblings=[
                 ContentComponent.from_json(sibling)
-                for sibling in json.get("siblings", [])
+                for sibling in json.get("siblings", []) or []
             ]
         )
 
@@ -85,7 +87,9 @@ class TextContentJson(ContentComponentJson[Literal["text"]]):
 
 
 class TextContent(ContentComponent, Model[TextContentJson]):
-    def __init__(self, text: str, siblings: List[Content] | None = None) -> None:
+    def __init__(
+        self, text: str, siblings: List[ContentComponent] | None = None
+    ) -> None:
         super().__init__(type="text", siblings=siblings)
         self.text = text
 
@@ -113,33 +117,40 @@ class TextContent(ContentComponent, Model[TextContentJson]):
 class ImageContentJson(ContentComponentJson[Literal["image"]]):
     url: str
     id: str
+    name: NotRequired[str] | None
 
 
 class ImageContent(ContentComponent, Model[ImageContentJson]):
     def __init__(
-        self, url: str, id: str, siblings: List[Content] | None = None
+        self,
+        url: str,
+        id: str,
+        name: str | None = None,
+        siblings: List[ContentComponent] | None = None,
     ) -> None:
         super().__init__(type="image", siblings=siblings)
         self.url = url
         self.id = id
+        self.name = name
 
     def json(self) -> ImageContentJson:
         return {
             "type": "image",
             "url": self.url,
             "id": self.id,
+            "name": self.name,
             "siblings": [sibling.json() for sibling in self.siblings]
             if self.siblings
             else [],
         }
 
     @classmethod
-    def of(cls, url: str, id: str) -> ImageContent:
-        return cls(url=url, id=id)
+    def of(cls, url: str, id: str, name: str | None = None) -> ImageContent:
+        return cls(url=url, id=id, name=name)
 
     @classmethod
     def from_json(cls, json: ImageContentJson) -> ImageContent:
-        return cls(url=json["url"], id=json["id"])
+        return cls(url=json["url"], id=json["id"], name=json.get("name"))
 
     def __str__(self) -> str:
-        return f"[Image: {self.url}]"
+        return f"[{self.name}]({self.url})"

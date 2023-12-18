@@ -1,3 +1,4 @@
+from omuchat.model.author import Author
 from omuchat.model.channel import Channel
 from omuchat.model.message import Message
 from omuchat.model.provider import Provider
@@ -25,9 +26,13 @@ class EventKey[**P]:
 
 class events:
     Ready = EventKey[[]]("ready")
+    Disconnect = EventKey[[]]("disconnect")
     MessageCreate = EventKey[[Message]]("on_message")
     MessageUpdate = EventKey[[Message]]("on_message_update")
     MessageDelete = EventKey[[Message]]("on_message_delete")
+    AuthorCreate = EventKey[[Author]]("on_author_create")
+    AuthorUpdate = EventKey[[Author]]("on_author_update")
+    AuthorDelete = EventKey[[Author]]("on_author_delete")
     ChannelCreate = EventKey[[Channel]]("on_channel_create")
     ChannelUpdate = EventKey[[Channel]]("on_channel_update")
     ChannelDelete = EventKey[[Channel]]("on_channel_delete")

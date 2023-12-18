@@ -1,18 +1,20 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, Coroutine, Dict, List
+from typing import TYPE_CHECKING, Callable, Coroutine, Dict, List, ParamSpec
 
 if TYPE_CHECKING:
     from .event import EventKey
 
 type EventHandler[**P] = Callable[P, Coroutine[None, None, None]]
 
+P = ParamSpec("P")
+
 
 class EventRegistry:
     def __init__(self) -> None:
-        self._handlers: Dict[EventKey, List[EventHandler]] = {}
+        self._handlers: Dict[EventKey[P], List[EventHandler]] = {}  # type: ignore
 
-    def add(self, key: EventKey, handler: EventHandler):
+    def add(self, key: EventKey[P], handler: EventHandler):
         if key not in self._handlers:
             self._handlers[key] = []
         self._handlers[key].append(handler)
