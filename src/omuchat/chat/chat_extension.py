@@ -2,7 +2,7 @@ from typing import Dict
 
 from omu.client import Client, ClientListener
 from omu.extension import Extension, define_extension_type
-from omu.extension.endpoint.endpoint import ClientEndpointType, EndpointInfo
+from omu.extension.endpoint.endpoint import EndpointInfo, SerializeEndpointType
 from omu.extension.server.model.extension_info import ExtensionInfo
 from omu.extension.table import TableExtensionType
 from omu.extension.table.model.table_info import TableInfo
@@ -24,11 +24,11 @@ class ChatExtension(Extension, ClientListener):
         self.client = client
         client.add_listener(self)
         tables = client.extensions.get(TableExtensionType)
-        self.messages = tables.register(MessagesTableKey)
-        self.authors = tables.register(AuthorsTableKey)
-        self.channels = tables.register(ChannelsTableKey)
-        self.providers = tables.register(ProviderTableKey)
-        self.rooms = tables.register(RoomTableKey)
+        self.messages = tables.get(MessagesTableKey)
+        self.authors = tables.get(AuthorsTableKey)
+        self.channels = tables.get(ChannelsTableKey)
+        self.providers = tables.get(ProviderTableKey)
+        self.rooms = tables.get(RoomTableKey)
 
     async def on_initialized(self) -> None:
         ...
@@ -39,7 +39,7 @@ MessagesTableKey = ModelTableType[Message, MessageJson](
     Serializer.model(lambda data: Message.from_json(data)),
 )
 AuthorsTableKey = ModelTableType[Author, AuthorJson](
-    TableInfo.create(ChatExtensionType, "authors"),
+    TableInfo.create(ChatExtensionType, "authors", use_database=True),
     Serializer.model(lambda data: Author.from_json(data)),
 )
 ChannelsTableKey = ModelTableType[Channel, ChannelJson](
@@ -54,7 +54,7 @@ RoomTableKey = ModelTableType[Room, RoomJson](
     TableInfo.create(ChatExtensionType, "rooms"),
     Serializer.model(lambda data: Room.from_json(data)),
 )
-FetchChannelsByUrlEndpoint = ClientEndpointType[str, Dict[str, Channel]](
+FetchChannelsByUrlEndpoint = SerializeEndpointType[str, Dict[str, Channel]](
     EndpointInfo.create(ChatExtensionType, "fetch_channels_by_url"),
     Serializer.noop(),
     Serializer.map(Serializer.model(Channel.from_json)),

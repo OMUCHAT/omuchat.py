@@ -14,7 +14,7 @@ class MessageJson(TypedDict):
     author_id: NotRequired[str] | None
     content: NotRequired[ContentJson] | None
     paid: NotRequired[PaidJson] | None
-    gift: NotRequired[GiftJson] | None
+    gifts: NotRequired[List[GiftJson]] | None
     created_at: NotRequired[str] | None  # ISO 8601 date string
 
 
@@ -26,7 +26,7 @@ class Message(Keyable, Model[MessageJson]):
         author_id: str | None = None,
         content: ContentComponent | None = None,
         paid: Paid | None = None,
-        gift: Gift | None = None,
+        gifts: List[Gift] | None = None,
         created_at: datetime | None = None,
     ) -> None:
         if created_at and not isinstance(created_at, datetime):
@@ -36,7 +36,7 @@ class Message(Keyable, Model[MessageJson]):
         self.content = content
         self.author_id = author_id
         self.paid = paid
-        self.gift = gift
+        self.gifts = gifts
         self.created_at = created_at
 
     @classmethod
@@ -47,9 +47,9 @@ class Message(Keyable, Model[MessageJson]):
         paid = None
         if json.get("paid", None) and json["paid"]:
             paid = Paid.from_json(json["paid"])
-        gift = None
-        if json.get("gift", None) and json["gift"]:
-            gift = Gift.from_json(json["gift"])
+        gifts = []
+        if json.get("gifts", None) and json["gifts"]:
+            gifts = [Gift.from_json(gift) for gift in json["gifts"]]
         created_at = None
         if json.get("created_at", None) and json["created_at"]:
             created_at = datetime.fromisoformat(json["created_at"])
@@ -60,7 +60,7 @@ class Message(Keyable, Model[MessageJson]):
             author_id=json.get("author_id"),
             content=content,
             paid=paid,
-            gift=gift,
+            gifts=gifts,
             created_at=created_at,
         )
 
@@ -88,9 +88,9 @@ class Message(Keyable, Model[MessageJson]):
             author_id=self.author_id,
             content=self.content.json() if self.content else None,
             paid=self.paid.json() if self.paid else None,
-            gift=self.gift.json() if self.gift else None,
+            gifts=[gift.json() for gift in self.gifts] if self.gifts else None,
             created_at=self.created_at.isoformat() if self.created_at else None,
         )
 
     def __str__(self) -> str:
-        return f"Message({self.room_id}, {self.id}, {self.author_id}, {self.content}, {self.paid}, {self.gift}, {self.created_at})"
+        return f"Message({self.room_id}, {self.id}, {self.author_id}, {self.content}, {self.paid}, {self.gifts}, {self.created_at})"

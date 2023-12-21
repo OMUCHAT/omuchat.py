@@ -10,7 +10,7 @@ client = Client(
 
 
 @client.on(events.Ready)
-async def on_ready(_):
+async def on_ready():
     print(f"We have logged in as {client.app}")
 
 

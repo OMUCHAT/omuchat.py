@@ -47,7 +47,7 @@ class Author(Keyable, Model[AuthorJson]):
             id=json["id"],
             name=json["name"],
             avatar_url=json.get("avatar_url", None) and json["avatar_url"],
-            roles=[Role.from_json(role) for role in json.get("roles", [])],
+            roles=[Role.from_json(role) for role in json.get("roles", []) or []],
         )
 
     def __str__(self) -> str:

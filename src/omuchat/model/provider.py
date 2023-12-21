@@ -1,9 +1,7 @@
 from __future__ import annotations
 
-import json
 from typing import TypedDict
 
-import aiohttp
 from omu.interface import Keyable, Model
 
 
@@ -69,17 +67,3 @@ class Provider(Keyable, Model[ProviderJson]):
 
     def __str__(self) -> str:
         return self.name
-
-    def get_session(self) -> aiohttp.ClientSession:
-        user_agent = json.dumps(
-            [
-                "OmuChat",
-                {
-                    "id": self.id,
-                    "version": self.version,
-                    "repository_url": self.repository_url,
-                },
-            ]
-        )
-        session = aiohttp.ClientSession(headers={"User-Agent": user_agent})
-        return session

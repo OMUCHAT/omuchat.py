@@ -102,7 +102,7 @@ class Client(ConnectionListener):
         self,
         app: App,
         address: Address | None = None,
-        client: omu.client.Client | None = None,
+        client: omu.Client | None = None,
     ):
         self.app = app
         self.address = address or Address("127.0.0.1", 26423)
@@ -155,9 +155,13 @@ class Client(ConnectionListener):
     def run(self):
         self.omu.run()
 
+    async def start(self):
+        await self.omu.start()
+
     def on[**P](self, key: EventKey[P]) -> Callable[[EventHandler[P]], EventHandler[P]]:
         def decorator(func: EventHandler[P]) -> EventHandler[P]:
             self.event_registry.add(key, func)
             return func
 
+        return decorator
         return decorator
