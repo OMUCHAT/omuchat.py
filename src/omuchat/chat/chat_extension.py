@@ -1,16 +1,15 @@
-from typing import Dict
+from typing import List
 
 from omu.client import Client, ClientListener
 from omu.extension import Extension, define_extension_type
-from omu.extension.endpoint.endpoint import EndpointInfo, SerializeEndpointType
+from omu.extension.endpoint.endpoint import SerializeEndpointType
 from omu.extension.server.model.extension_info import ExtensionInfo
 from omu.extension.table import TableExtensionType
-from omu.extension.table.model.table_info import TableInfo
 from omu.extension.table.table import ModelTableType
 from omu.interface import Serializer
-from omuchat.model.author import Author, AuthorJson
+from omuchat.model.author import Author
 from omuchat.model.channel import Channel, ChannelJson
-from omuchat.model.message import Message, MessageJson
+from omuchat.model.message import Message
 from omuchat.model.provider import Provider, ProviderJson
 from omuchat.model.room import Room, RoomJson
 
@@ -34,28 +33,38 @@ class ChatExtension(Extension, ClientListener):
         ...
 
 
-MessagesTableKey = ModelTableType[Message, MessageJson](
-    TableInfo.create(ChatExtensionType, "messages", use_database=True),
-    Serializer.model(lambda data: Message.from_json(data)),
+MessagesTableKey = ModelTableType.of_extension(
+    ChatExtensionType,
+    "messages",
+    Message,
 )
-AuthorsTableKey = ModelTableType[Author, AuthorJson](
-    TableInfo.create(ChatExtensionType, "authors", use_database=True),
-    Serializer.model(lambda data: Author.from_json(data)),
+MessagesTableKey.info.use_database = True
+MessagesTableKey.info.cache_size = 1000
+AuthorsTableKey = ModelTableType.of_extension(
+    ChatExtensionType,
+    "authors",
+    Author,
 )
-ChannelsTableKey = ModelTableType[Channel, ChannelJson](
-    TableInfo.create(ChatExtensionType, "channels"),
-    Serializer.model(lambda data: Channel.from_json(data)),
+AuthorsTableKey.info.use_database = True
+AuthorsTableKey.info.cache_size = 1000
+ChannelsTableKey = ModelTableType[Channel, ChannelJson].of_extension(
+    ChatExtensionType,
+    "channels",
+    Channel,
 )
-ProviderTableKey = ModelTableType[Provider, ProviderJson](
-    TableInfo.create(ChatExtensionType, "providers"),
-    Serializer.model(lambda data: Provider.from_json(data)),
+ProviderTableKey = ModelTableType[Provider, ProviderJson].of_extension(
+    ChatExtensionType,
+    "providers",
+    Provider,
 )
-RoomTableKey = ModelTableType[Room, RoomJson](
-    TableInfo.create(ChatExtensionType, "rooms"),
-    Serializer.model(lambda data: Room.from_json(data)),
+RoomTableKey = ModelTableType[Room, RoomJson].of_extension(
+    ChatExtensionType,
+    "rooms",
+    Room,
 )
-FetchChannelsByUrlEndpoint = SerializeEndpointType[str, Dict[str, Channel]](
-    EndpointInfo.create(ChatExtensionType, "fetch_channels_by_url"),
+CreateChannelTreeEndpoint = SerializeEndpointType[str, List[Channel]].of_extension(
+    ChatExtensionType,
+    "create_channel_tree",
     Serializer.noop(),
-    Serializer.map(Serializer.model(Channel.from_json)),
+    Serializer.array(Serializer.model(Channel)),
 )

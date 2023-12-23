@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import TypedDict
 
 from omu.interface import Keyable, Model
@@ -12,7 +11,6 @@ class ChannelJson(TypedDict):
     description: str
     active: bool
     icon_url: str
-    created_at: int
 
 
 class Channel(Keyable, Model[ChannelJson]):
@@ -25,7 +23,6 @@ class Channel(Keyable, Model[ChannelJson]):
         description: str,
         active: bool,
         icon_url: str,
-        created_at: datetime,
     ) -> None:
         self.provider_id = provider_id
         self.id = id
@@ -34,7 +31,6 @@ class Channel(Keyable, Model[ChannelJson]):
         self.description = description
         self.active = active
         self.icon_url = icon_url
-        self.created_at = created_at
 
     @classmethod
     def from_json(cls, json: ChannelJson) -> "Channel":
@@ -46,7 +42,6 @@ class Channel(Keyable, Model[ChannelJson]):
             description=json["description"],
             active=json["active"],
             icon_url=json["icon_url"],
-            created_at=datetime.fromtimestamp(json["created_at"] / 1000),
         )
 
     def key(self) -> str:
@@ -61,7 +56,6 @@ class Channel(Keyable, Model[ChannelJson]):
             description=self.description,
             active=self.active,
             icon_url=self.icon_url,
-            created_at=int(self.created_at.timestamp() * 1000),
         )
 
     def __str__(self):
