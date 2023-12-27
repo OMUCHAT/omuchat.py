@@ -31,13 +31,13 @@ class Author(Keyable, Model[AuthorJson]):
     def key(self) -> str:
         return f"{self.provider_id}:{self.id}"
 
-    def json(self) -> AuthorJson:
+    def to_json(self) -> AuthorJson:
         return {
             "provider_id": self.provider_id,
             "id": self.id,
             "name": self.name,
             "avatar_url": self.avatar_url,
-            "roles": [role.json() for role in self.roles],
+            "roles": [role.to_json() for role in self.roles],
         }
 
     @classmethod

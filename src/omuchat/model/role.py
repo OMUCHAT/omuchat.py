@@ -32,7 +32,7 @@ class Role(Keyable, Model[RoleJson]):
     def key(self) -> str:
         return self.id
 
-    def json(self) -> RoleJson:
+    def to_json(self) -> RoleJson:
         return {
             "id": self.id,
             "name": self.name,

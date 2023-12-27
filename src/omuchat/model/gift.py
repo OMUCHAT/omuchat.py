@@ -36,7 +36,7 @@ class Gift(Model[GiftJson]):
             image_url=json.get("image_url", None) and json["image_url"],
         )
 
-    def json(self) -> GiftJson:
+    def to_json(self) -> GiftJson:
         return {
             "id": self.id,
             "name": self.name,

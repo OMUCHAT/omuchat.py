@@ -47,7 +47,7 @@ class Channel(Keyable, Model[ChannelJson]):
     def key(self) -> str:
         return f"{self.provider_id}:{self.url}"
 
-    def json(self) -> ChannelJson:
+    def to_json(self) -> ChannelJson:
         return ChannelJson(
             provider_id=self.provider_id,
             id=self.id,

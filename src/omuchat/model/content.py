@@ -30,10 +30,10 @@ class ContentComponent(Model[ContentComponentJson]):
             case "root":
                 return RootContent.from_json(json)
 
-    def json(self) -> ContentComponentJson:
+    def to_json(self) -> ContentComponentJson:
         return ContentComponentJson(
             type=self.type,
-            siblings=[sibling.json() for sibling in self.siblings]
+            siblings=[sibling.to_json() for sibling in self.siblings]
             if self.siblings
             else [],
         )
@@ -46,11 +46,12 @@ class RootContentJson(ContentComponentJson[Literal["root"]]):
 class RootContent(ContentComponent, Model[RootContentJson]):
     def __init__(self, siblings: List[ContentComponent] | None = None) -> None:
         super().__init__(type="root", siblings=siblings)
+        self.siblings = siblings
 
-    def json(self) -> RootContentJson:
+    def to_json(self) -> RootContentJson:
         return {
             "type": "root",
-            "siblings": [sibling.json() for sibling in self.siblings]
+            "siblings": [sibling.to_json() for sibling in self.siblings]
             if self.siblings
             else [],
         }
@@ -93,11 +94,11 @@ class TextContent(ContentComponent, Model[TextContentJson]):
         super().__init__(type="text", siblings=siblings)
         self.text = text
 
-    def json(self) -> TextContentJson:
+    def to_json(self) -> TextContentJson:
         return {
             "type": "text",
             "text": self.text,
-            "siblings": [sibling.json() for sibling in self.siblings]
+            "siblings": [sibling.to_json() for sibling in self.siblings]
             if self.siblings
             else [],
         }
@@ -133,13 +134,13 @@ class ImageContent(ContentComponent, Model[ImageContentJson]):
         self.id = id
         self.name = name
 
-    def json(self) -> ImageContentJson:
+    def to_json(self) -> ImageContentJson:
         return {
             "type": "image",
             "url": self.url,
             "id": self.id,
             "name": self.name,
-            "siblings": [sibling.json() for sibling in self.siblings]
+            "siblings": [sibling.to_json() for sibling in self.siblings]
             if self.siblings
             else [],
         }

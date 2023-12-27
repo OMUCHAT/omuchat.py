@@ -55,7 +55,7 @@ class Room(Keyable, Model[RoomJson]):
     def key(self) -> str:
         return f"{self.id}@{self.provider_id}"
 
-    def json(self) -> RoomJson:
+    def to_json(self) -> RoomJson:
         return RoomJson(
             id=self.id,
             provider_id=self.provider_id,

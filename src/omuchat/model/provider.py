@@ -53,7 +53,7 @@ class Provider(Keyable, Model[ProviderJson]):
     def key(self) -> str:
         return self.id
 
-    def json(self) -> ProviderJson:
+    def to_json(self) -> ProviderJson:
         return ProviderJson(
             id=self.id,
             url=self.url,
@@ -66,4 +66,4 @@ class Provider(Keyable, Model[ProviderJson]):
         )
 
     def __str__(self) -> str:
-        return self.name
+        return f"Provider({self.key()})"

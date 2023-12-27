@@ -17,7 +17,7 @@ class Paid(Model[PaidJson]):
     def from_json(cls, json: PaidJson) -> "Paid":
         return cls(amount=json["amount"], currency=json["currency"])
 
-    def json(self) -> PaidJson:
+    def to_json(self) -> PaidJson:
         return {"amount": self.amount, "currency": self.currency}
 
     def __str__(self) -> str:
