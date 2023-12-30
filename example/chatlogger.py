@@ -3,7 +3,7 @@ from omuchat import App, Client, Message, events
 client = Client(
     App(
         name="test",
-        version="0.0.1",
+        version="0.1.0",
         group="com.example",
     )
 )
