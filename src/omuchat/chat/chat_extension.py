@@ -3,7 +3,6 @@ from typing import List
 from omu.client import Client, ClientListener
 from omu.extension import Extension, define_extension_type
 from omu.extension.endpoint.endpoint import SerializeEndpointType
-from omu.extension.server.model.extension_info import ExtensionInfo
 from omu.extension.table import TableExtensionType
 from omu.extension.table.table import ModelTableType
 from omu.interface import Serializer
@@ -14,7 +13,7 @@ from omuchat.model.provider import Provider, ProviderJson
 from omuchat.model.room import Room, RoomJson
 
 ChatExtensionType = define_extension_type(
-    ExtensionInfo.create("chat"), lambda client: ChatExtension(client), lambda: []
+    "chat", lambda client: ChatExtension(client), lambda: []
 )
 
 
