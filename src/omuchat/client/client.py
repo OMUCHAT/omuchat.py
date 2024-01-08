@@ -1,10 +1,10 @@
 from typing import Callable, Dict
 
-from loguru import logger
-
 import omu.client
+from loguru import logger
 from omu import Address, App, ConnectionListener, OmuClient
 from omu.extension.table import Table, TableListener
+
 from omuchat.event import EventHandler, EventKey, EventRegistry, events
 from omuchat.model import Channel, Message, Provider, Room
 from omuchat.model.author import Author
@@ -163,5 +163,4 @@ class Client(ConnectionListener):
             self.event_registry.add(key, func)
             return func
 
-        return decorator
         return decorator
